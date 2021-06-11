@@ -17,35 +17,48 @@ public class PlayerMovement2D : MonoBehaviour
 
     Vector2 m_playerDirection;
     Vector2 m_playerVelocity;
+    Vector2 m_playerMovement;
 
 
     void Awake()
     {
         m_playerVelocity = Vector2.zero;
         m_playerDirection = Vector2.zero;
+        m_playerMovement = Vector2.zero;
     }
 
     public void MovePlayer(InputAction.CallbackContext inputCallback)
     {
-        if(!_allowAirMovement)
-        {
-            if(!groundCheck.IsGrounded())
-                return;
-        }
-
         m_playerDirection = inputCallback.ReadValue<Vector2>();
 
         m_playerDirection.y = 0;
 
-        m_playerVelocity = m_playerDirection * _playerSpeed;
-
-        playerBody.velocity = m_playerVelocity;
+        m_playerMovement = m_playerDirection * _playerSpeed;
     }
 
 
     public void StopPlayer(InputAction.CallbackContext inputCallback)
     {
-        m_playerVelocity = Vector2.zero;
+        m_playerMovement = Vector2.zero;
+    }
+
+
+    void FixedUpdate()
+    {
+        HandleMovement();
+    }
+
+    void HandleMovement()
+    {
+        m_playerVelocity = playerBody.velocity;
+
+        if (!_allowAirMovement)
+        {
+            if (!groundCheck.IsGrounded)
+                return;
+        }
+        m_playerVelocity.x = m_playerMovement.x;
+
         playerBody.velocity = m_playerVelocity;
     }
 }

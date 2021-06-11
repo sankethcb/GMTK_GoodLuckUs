@@ -11,6 +11,11 @@ public class PlayerGroundCheck2D : MonoBehaviour
     [Header("Settings")]
     [SerializeField] float groundRaycastDist = 0.1f;
 
+    [Header ("Variables")]
+    [SerializeField] bool _isGrounded = false;
+
+    public bool IsGrounded => _isGrounded;
+
     RaycastHit2D _raycastLeftFoot;
     RaycastHit2D _raycastRightFoot;
 
@@ -21,11 +26,16 @@ public class PlayerGroundCheck2D : MonoBehaviour
         _levelMask = LayerMask.GetMask("Level");
     }
 
-    public bool IsGrounded()
+    void FixedUpdate() 
+    {
+        CheckGrounding();
+    }
+
+    public void CheckGrounding()
     {
         _raycastLeftFoot = Physics2D.Raycast(leftFoot.position, Vector2.down, groundRaycastDist, _levelMask);
         _raycastRightFoot = Physics2D.Raycast(rightFoot.position, Vector2.down, groundRaycastDist, _levelMask);
 
-        return (_raycastLeftFoot.collider || _raycastRightFoot.collider);
+        _isGrounded =  (_raycastLeftFoot.collider || _raycastRightFoot.collider);
     }
 }
