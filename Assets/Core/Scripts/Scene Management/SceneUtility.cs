@@ -6,7 +6,7 @@ namespace Core.SceneManagement
     public enum SCENES
     {
         //###START###
-SampleScene,
+Main,
 
 //&&&END&&&
 	}
