@@ -24,12 +24,14 @@ namespace Core
         {
             foreach (GameObject system in gameSystems.GetSystems)
             {
-                Instantiate(system, transform);
+                Instantiate(system);
             }
 
 #if UNITY_EDITOR || DEV_BUILD
             Debug.Log("Game Systems Loaded");
 #endif
+
+            Destroy(gameObject);
         }
     }
 }

@@ -30,6 +30,7 @@ namespace Core.Input
 
             m_inputAction = inputActionData.InputAction(playerIndex);
 
+            
             AssignListeners();
 
             return true;
@@ -65,9 +66,28 @@ namespace Core.Input
         {
             OnStarted = OnPerformed = OnCancelled = null;
 
-            InitializeListeners(ref OnStarted, onStarted);
-            InitializeListeners(ref OnPerformed, onPerformed);
-            InitializeListeners(ref OnCancelled, onCancelled);
+        
+            foreach (MethodPicker<InputAction.CallbackContext> method in onStarted)
+            {
+                if (method.Behaviour == null) continue;
+                OnStarted += method.BuildMethod();
+            }
+
+            foreach (MethodPicker<InputAction.CallbackContext> method in onPerformed)
+            {
+                if (method.Behaviour == null) continue;
+                OnPerformed += method.BuildMethod();
+            }
+
+            foreach (MethodPicker<InputAction.CallbackContext> method in onCancelled)
+            {
+                if (method.Behaviour == null) continue;
+                OnCancelled += method.BuildMethod();
+            }
+
+            //InitializeListeners(ref OnStarted, onStarted);
+            //InitializeListeners(ref OnPerformed, onPerformed);
+            //InitializeListeners(ref OnCancelled, onCancelled);
 
             m_initalized = true;
         }
@@ -77,6 +97,7 @@ namespace Core.Input
             foreach (MethodPicker<InputAction.CallbackContext> method in listeners)
             {
                 if (method.Behaviour == null) continue;
+                Debug.Log(method);
                 action += method.BuildMethod();
             }
         }

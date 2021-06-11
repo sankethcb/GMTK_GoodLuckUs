@@ -25,6 +25,9 @@ namespace Core.Input
 
             PlayerCount++;
             inputActionDataSet.RegisterPlayerInput(playerInput.actions, playerInput.playerIndex);
+
+
+            DontDestroyOnLoad(gameObject);
         }
 
         void OnDestroy()

@@ -125,8 +125,6 @@ namespace Utilities
 
             if (target as ScriptableObject != null)
             {
-                Debug.Log((target as ScriptableObject).GetType());
-
                 behaviours = new UnityEngine.Object[1];
                 behaviours[0] = target as UnityEngine.Object;
             }
