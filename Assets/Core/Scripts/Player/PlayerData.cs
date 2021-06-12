@@ -5,5 +5,6 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class PlayerData : ScriptableObject
 {
+    public int GroupCount = 3;
     public List<Color> ColorSet;
 }

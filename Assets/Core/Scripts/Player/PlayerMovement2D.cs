@@ -13,7 +13,10 @@ public class PlayerMovement2D : MonoBehaviour
     [Header("Settings")]
     [SerializeField] float playerSpeed = 10;
     [SerializeField] bool allowAirMovement = true;
-    [Range(0, .3f)] [SerializeField] float smoothing = .05f;	
+    [Range(0, .3f)] [SerializeField] float smoothing = .05f;
+
+    [Header("Variables")]
+    [SerializeField] bool movementEnabled = true;
 
 
     Vector2 m_playerDirection;
@@ -55,6 +58,15 @@ public class PlayerMovement2D : MonoBehaviour
         m_playerVelocityTarget.y = playerBody.velocity.y;
 
         playerBody.velocity = Vector3.SmoothDamp(playerBody.velocity, m_playerVelocityTarget, ref m_playerVelocityCurrent, smoothing);
-        
+
     }
+
+    void OnDisable() 
+    {
+        m_playerVelocityTarget.x = 0;
+        m_playerVelocityTarget.y = playerBody.velocity.y;
+        playerBody.velocity = m_playerVelocityTarget;
+    }
+
+
 }
