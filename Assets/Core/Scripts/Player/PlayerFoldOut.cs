@@ -10,6 +10,7 @@ public class PlayerFoldOut : MonoBehaviour
     [SerializeField] PlayerData playerData;
     [SerializeField] PlayerMovement2D playerMovement;
     [SerializeField] PlayerGroundCheck2D groundCheck;
+    [SerializeField] PlayerLedgeCheck2D ledgeCheck;
     [SerializeField] Transform cameraTarget;
     [SerializeField] Transform playerSpriteObject;
 
@@ -21,6 +22,7 @@ public class PlayerFoldOut : MonoBehaviour
     [SerializeField] Sprite foldoutSprite;
     [SerializeField] float foldoutSpeed = 1;
     [SerializeField] float foldoutAcceleration = 1;
+    [SerializeField] float climbHopDistance = 1;
     [SerializeField] Vector2 foldoutSize;
 
     Vector2 m_foldoutPosition;
@@ -59,6 +61,14 @@ public class PlayerFoldOut : MonoBehaviour
         }
     }
 
+    void ReverseFoldOutColors()
+    {
+        for (int i = foldOutSprites.Count - 1; i >= 0; i--)
+        {
+            foldOutSprites[i].color = playerData.ColorSet[i];
+        }
+    }
+
     public void FoldoutLeftStart(InputAction.CallbackContext inputCallback)
     {
         _currentDirection = -1;
@@ -86,14 +96,12 @@ public class PlayerFoldOut : MonoBehaviour
 
         playerMovement.enabled = false;
 
-        //Initalize Sequence
-        m_foldoutSequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
-        m_foldoutSequence.OnRewind(() => OnFoldOutReset());
-        m_foldoutSequence.OnKill(() => OnFoldOutKilled());
-        m_foldoutSequence.OnComplete(() => groundCheck.transform.position = foldOutTransforms[playerData.GroupCount - 1].transform.position);
+        InitalizeSequence();
 
+        m_foldoutSequence.OnComplete(() => groundCheck.transform.position = foldOutSprites[playerData.GroupCount - 1].transform.position);
 
+        m_foldoutOffset.y = 0;
         m_foldoutOffset.x = foldoutSize.x / 2 * direction;
 
         m_foldoutPosition = Vector2.zero;
@@ -127,7 +135,6 @@ public class PlayerFoldOut : MonoBehaviour
         {
             if (groundCheck.IsGrounded)
             {
-
                 _succesfullFoldout = true;
                 m_foldoutSequence.Kill();
                 SuccessfulHorizontalFoldOut();
@@ -140,7 +147,7 @@ public class PlayerFoldOut : MonoBehaviour
 
     void SuccessfulHorizontalFoldOut()
     {
-        m_foldoutSequence = DOTween.Sequence().Pause();
+        m_foldoutSequence = DOTween.Sequence().Pause().SetAutoKill(false); ;
 
         for (int i = 0; i < playerData.GroupCount; i++)
         {
@@ -149,36 +156,19 @@ public class PlayerFoldOut : MonoBehaviour
 
             foldOutTransforms[i].localPosition = m_foldoutPosition;
             foldOutSprites[i].transform.localPosition = -m_foldoutOffset;
-        }
-
-        for (int i = 0; i < playerData.GroupCount; i++)
-        {
 
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
-            m_foldoutSequence.Append(foldOutTransforms[i].DOScaleX(0, m_foldOutTime).SetEase(Ease.InExpo));
-            m_foldoutSequence.Join(playerSpriteObject.DOMoveX(foldOutSprites[i].transform.position.x, m_foldOutTime).SetEase(Ease.InExpo));
-
+            m_foldoutSequence.Append(foldOutTransforms[i].DOScaleX(0, m_foldOutTime).SetEase(Ease.OutExpo));
+            m_foldoutSequence.Join(playerSpriteObject.DOMoveX(foldOutSprites[i].transform.position.x, m_foldOutTime).SetEase(Ease.OutExpo));
         }
 
-        m_foldoutSequence.Play().OnComplete(() => OnSuccessfulFoldOut());
+        m_foldoutSequence.Play().OnComplete(() => PostSuccessfulHorizontalFoldOut());
     }
 
-    public void FoldoutUpStart(InputAction.CallbackContext inputCallback)
+    void PostSuccessfulHorizontalFoldOut()
     {
-
-    }
-
-    public void FoldoutUpEnd(InputAction.CallbackContext inputCallback)
-    {
-
-    }
-
-
-    void OnSuccessfulFoldOut()
-    {
-        playerMovement.transform.position = foldOutSprites[playerData.GroupCount - 1].transform.position;
-
+        playerMovement.transform.position = playerSpriteObject.transform.position;
 
         playerSpriteObject.transform.localPosition = Vector3.zero;
         cameraTarget.transform.localPosition = Vector3.zero;
@@ -187,6 +177,121 @@ public class PlayerFoldOut : MonoBehaviour
         OnFoldOutReset();
     }
 
+    public void FoldoutUpStart(InputAction.CallbackContext inputCallback)
+    {
+        if (m_foldoutSequence != null)
+        {
+            if (m_foldoutSequence.IsPlaying())
+            {
+                m_foldoutSequence.PlayForward();
+                return;
+            }
+            else
+                m_foldoutSequence.Kill();
+        }
+
+        playerMovement.enabled = false;
+
+        InitalizeSequence();
+        m_foldoutSequence.OnComplete(() => ledgeCheck.transform.position = foldOutSprites[playerData.GroupCount - 1].transform.position);
+
+        m_foldoutOffset.x = 0;
+        m_foldoutOffset.y = foldoutSize.y / 2;
+
+        m_foldoutPosition = Vector2.zero;
+
+        m_foldoutPosition.y -= m_foldoutOffset.y;
+        m_foldoutScale.x = 1;
+        m_foldoutScale.y = 0;
+
+        for (int i = 0; i < playerData.GroupCount; i++)
+        {
+            m_foldoutPosition.y += foldoutSize.y;
+
+            foldOutTransforms[i].localPosition = m_foldoutPosition;
+            foldOutSprites[i].transform.localPosition = m_foldoutOffset;
+
+            foldOutTransforms[i].gameObject.SetActive(true);
+
+            foldOutTransforms[i].localScale = m_foldoutScale;
+
+            m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
+
+            m_foldoutSequence.Append(foldOutTransforms[i].DOScaleY(1, m_foldOutTime).SetEase(Ease.OutExpo));
+            m_foldoutSequence.Join(cameraTarget.DOMoveY(foldOutSprites[i].transform.position.y, m_foldOutTime).SetEase(Ease.OutExpo));
+        }
+
+        m_foldoutSequence.Play();
+    }
+
+    public void FoldoutUpEnd(InputAction.CallbackContext inputCallback)
+    {
+        if (m_foldoutSequence.IsComplete())
+        {
+            if (ledgeCheck.CheckLedge())
+            {
+                _succesfullFoldout = true;
+                m_foldoutSequence.Kill();
+                SuccessfulVerticalFoldOut();
+                return;
+            }
+        }
+
+        m_foldoutSequence.PlayBackwards();
+    }
+
+    void SuccessfulVerticalFoldOut()
+    {
+        m_foldoutSequence = DOTween.Sequence().Pause().SetAutoKill(false); ;
+
+        for (int i = 0; i < playerData.GroupCount; i++)
+        {
+            m_foldoutPosition = foldOutTransforms[i].localPosition;
+            m_foldoutPosition.y += foldoutSize.y;
+
+            foldOutTransforms[i].localPosition = m_foldoutPosition;
+            foldOutSprites[i].transform.localPosition = -m_foldoutOffset;
+
+            m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
+
+            m_foldoutSequence.Append(foldOutTransforms[i].DOScaleY(0, m_foldOutTime).SetEase(Ease.OutExpo));
+            m_foldoutSequence.Join(playerSpriteObject.DOMoveY(foldOutSprites[i].transform.position.y, m_foldOutTime).SetEase(Ease.OutExpo));
+        }
+
+
+
+        m_foldoutSequence.Play().OnComplete(() => PostSuccessfulVerticalFoldOut());
+    }
+
+    void PostSuccessfulVerticalFoldOut()
+    {
+        playerMovement.transform.position = playerSpriteObject.transform.position;
+
+        playerSpriteObject.transform.localPosition = Vector3.zero;
+        cameraTarget.transform.localPosition = Vector3.zero;
+        ledgeCheck.transform.localPosition = Vector3.zero;
+
+        Vector2 newPlayerPos = ledgeCheck.CornerPosition;
+        newPlayerPos.y += foldoutSize.y / 2 * transform.localScale.x; 
+        
+        float xDist = newPlayerPos.x - playerMovement.transform.position.x;
+        float yDist = newPlayerPos.y - playerMovement.transform.position.y;
+        
+        DOTween.Sequence()
+        .Append(playerMovement.transform.DOBlendableMoveBy(new Vector3(0, yDist + climbHopDistance, 0), 0.5f))
+        .Insert(0.2f, playerMovement.transform.DOBlendableMoveBy(new Vector3(xDist + 0.5f * Mathf.Sign(xDist), 0, 0), 0.5f));
+        
+
+        OnFoldOutReset();
+    }
+
+    void InitalizeSequence()
+    {
+        m_foldoutSequence = DOTween.Sequence().Pause().SetAutoKill(false);
+
+        m_foldoutSequence.OnRewind(() => OnFoldOutReset());
+        m_foldoutSequence.OnKill(() => OnFoldOutKilled());
+    }
 
     void OnFoldOutReset()
     {

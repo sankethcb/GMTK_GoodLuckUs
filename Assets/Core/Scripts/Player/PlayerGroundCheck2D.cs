@@ -17,8 +17,8 @@ public class PlayerGroundCheck2D : MonoBehaviour
 
     public bool IsGrounded => _isGrounded;
 
-    RaycastHit2D _raycastLeftFoot;
-    RaycastHit2D _raycastRightFoot;
+    RaycastHit2D m_raycastLeftFoot;
+    RaycastHit2D m_raycastRightFoot;
 
 
     void FixedUpdate() 
@@ -28,9 +28,9 @@ public class PlayerGroundCheck2D : MonoBehaviour
 
     public void CheckGrounding()
     {
-        _raycastLeftFoot = Physics2D.Raycast(leftFoot.position, Vector2.down, groundRaycastDist, levelMask);
-        _raycastRightFoot = Physics2D.Raycast(rightFoot.position, Vector2.down, groundRaycastDist, levelMask);
+        m_raycastLeftFoot = Physics2D.Raycast(leftFoot.position, Vector2.down, groundRaycastDist, levelMask);
+        m_raycastRightFoot = Physics2D.Raycast(rightFoot.position, Vector2.down, groundRaycastDist, levelMask);
 
-        _isGrounded =  (_raycastLeftFoot.collider || _raycastRightFoot.collider);
+        _isGrounded =  (m_raycastLeftFoot.collider || m_raycastRightFoot.collider);
     }
 }
