@@ -54,8 +54,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerBody: {fileID: 4669556767120580989}
   groundCheck: {fileID: 4669556767120580976}
-  _playerSpeed: 3
-  _allowAirMovement: 0
+  playerSpeed: 100
+  allowAirMovement: 0
+  smoothing: 0.05
 --- !u!114 &4669556767120580976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,6 +72,7 @@ MonoBehaviour:
   leftFoot: {fileID: 4669556768356894109}
   rightFoot: {fileID: 4669556768387898361}
   groundRaycastDist: 0.1
+  _isGrounded: 0
 --- !u!114 &4669556767120580991
 MonoBehaviour:
   m_ObjectHideFlags: 0

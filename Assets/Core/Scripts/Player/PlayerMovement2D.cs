@@ -11,20 +11,22 @@ public class PlayerMovement2D : MonoBehaviour
     [SerializeField] PlayerGroundCheck2D groundCheck;
 
     [Header("Settings")]
-    [SerializeField] float _playerSpeed = 1;
-    [SerializeField] bool _allowAirMovement = true;
+    [SerializeField] float playerSpeed = 10;
+    [SerializeField] bool allowAirMovement = true;
+    [Range(0, .3f)] [SerializeField] float smoothing = .05f;	
 
 
     Vector2 m_playerDirection;
-    Vector2 m_playerVelocity;
-    Vector2 m_playerMovement;
+    Vector2 m_playerVelocityTarget;
+    Vector3 m_playerVelocityCurrent;
 
 
     void Awake()
     {
-        m_playerVelocity = Vector2.zero;
+        m_playerVelocityTarget = Vector2.zero;
+        m_playerVelocityCurrent = Vector2.zero;
+
         m_playerDirection = Vector2.zero;
-        m_playerMovement = Vector2.zero;
     }
 
     public void MovePlayer(InputAction.CallbackContext inputCallback)
@@ -33,15 +35,13 @@ public class PlayerMovement2D : MonoBehaviour
 
         m_playerDirection.y = 0;
 
-        m_playerMovement = m_playerDirection * _playerSpeed;
+        m_playerVelocityTarget.x = m_playerDirection.x * playerSpeed * Time.fixedDeltaTime;
     }
-
 
     public void StopPlayer(InputAction.CallbackContext inputCallback)
     {
-        m_playerMovement = Vector2.zero;
+        m_playerVelocityTarget = Vector2.zero;
     }
-
 
     void FixedUpdate()
     {
@@ -50,15 +50,11 @@ public class PlayerMovement2D : MonoBehaviour
 
     void HandleMovement()
     {
-        m_playerVelocity = playerBody.velocity;
+        if (!(groundCheck.IsGrounded || allowAirMovement))
+            return;
 
-        if (!_allowAirMovement)
-        {
-            if (!groundCheck.IsGrounded)
-                return;
-        }
-        m_playerVelocity.x = m_playerMovement.x;
-
-        playerBody.velocity = m_playerVelocity;
+        m_playerVelocityTarget.y = playerBody.velocity.y;
+        
+        playerBody.velocity = Vector3.SmoothDamp(playerBody.velocity, m_playerVelocityTarget, ref m_playerVelocityCurrent, smoothing);
     }
 }
