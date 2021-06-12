@@ -38,6 +38,22 @@
                     "interactions": ""
                 },
                 {
+                    "name": "AltFire",
+                    "type": "Button",
+                    "id": "6cb0da51-220d-40d8-8cdc-c72701fee9bf",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "735ad968-36e2-4183-9da4-87a7c7b5fb9e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Console",
                     "type": "Button",
                     "id": "867b60a2-825b-473b-9947-14f0b1ade112",
@@ -270,7 +286,7 @@
                 {
                     "name": "",
                     "id": "e64384b7-1a9f-45b1-ac4c-73f8678cb803",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Controller",
@@ -308,6 +324,50 @@
                     "processors": "",
                     "groups": "KBM",
                     "action": "Console",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "59b4d7a9-c268-4e01-85be-f68db713a383",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KBM",
+                    "action": "AltFire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "06cb1287-13bc-403c-a97e-5e3e288867ab",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Controller",
+                    "action": "AltFire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9a781931-422b-49c1-85bf-63a46837e0c5",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KBM",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5e4a2a93-921f-405b-b86c-8c0e0d4aa194",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Controller",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

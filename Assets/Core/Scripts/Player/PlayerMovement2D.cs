@@ -20,7 +20,6 @@ public class PlayerMovement2D : MonoBehaviour
     Vector2 m_playerVelocityTarget;
     Vector3 m_playerVelocityCurrent;
 
-
     void Awake()
     {
         m_playerVelocityTarget = Vector2.zero;
@@ -54,7 +53,8 @@ public class PlayerMovement2D : MonoBehaviour
             return;
 
         m_playerVelocityTarget.y = playerBody.velocity.y;
-        
+
         playerBody.velocity = Vector3.SmoothDamp(playerBody.velocity, m_playerVelocityTarget, ref m_playerVelocityCurrent, smoothing);
+        
     }
 }
