@@ -741,14 +741,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1261188975, guid: 929f7661a29ba354f9f04256f22bbcf9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.334
-      objectReference: {fileID: 0}
-    - target: {fileID: 2121652485, guid: 929f7661a29ba354f9f04256f22bbcf9, type: 3}
-      propertyPath: climbHopDistance
-      value: 2.5
-      objectReference: {fileID: 0}
     - target: {fileID: 4669556767120580986, guid: 929f7661a29ba354f9f04256f22bbcf9, type: 3}
       propertyPath: m_Name
       value: Player

@@ -15,9 +15,6 @@ public class PlayerMovement2D : MonoBehaviour
     [SerializeField] bool allowAirMovement = true;
     [Range(0, .3f)] [SerializeField] float smoothing = .05f;
 
-    [Header("Variables")]
-    [SerializeField] bool movementEnabled = true;
-
 
     Vector2 m_playerDirection;
     Vector2 m_playerVelocityTarget;
