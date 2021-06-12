@@ -32,6 +32,7 @@ public class PlayerFoldOut : MonoBehaviour
     float m_foldOutTime;
 
     bool _succesfullFoldout = false;
+    int _currentDirection = 0;
 
     void Awake()
     {
@@ -58,14 +59,19 @@ public class PlayerFoldOut : MonoBehaviour
         }
     }
 
-
-
     public void FoldoutLeftStart(InputAction.CallbackContext inputCallback)
     {
-
+        _currentDirection = -1;
+        FoldoutHorizontalStart(_currentDirection);
     }
 
     public void FoldoutRightStart(InputAction.CallbackContext inputCallback)
+    {
+        _currentDirection = 1;
+        FoldoutHorizontalStart(_currentDirection);
+    }
+
+    void FoldoutHorizontalStart(int direction)
     {
         if (m_foldoutSequence != null)
         {
@@ -80,24 +86,25 @@ public class PlayerFoldOut : MonoBehaviour
 
         playerMovement.enabled = false;
 
+        //Initalize Sequence
         m_foldoutSequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
         m_foldoutSequence.OnRewind(() => OnFoldOutReset());
         m_foldoutSequence.OnKill(() => OnFoldOutKilled());
         m_foldoutSequence.OnComplete(() => groundCheck.transform.position = foldOutTransforms[playerData.GroupCount - 1].transform.position);
 
-        m_foldoutOffset.x = foldoutSize.x / 2;
+
+        m_foldoutOffset.x = foldoutSize.x / 2 * direction;
 
         m_foldoutPosition = Vector2.zero;
-        m_foldoutPosition.x -= m_foldoutOffset.x;
 
+        m_foldoutPosition.x -= m_foldoutOffset.x;
         m_foldoutScale.x = 0;
         m_foldoutScale.y = 1;
 
-
         for (int i = 0; i < playerData.GroupCount; i++)
         {
-            m_foldoutPosition.x += foldoutSize.x;
+            m_foldoutPosition.x += foldoutSize.x * direction;
 
             foldOutTransforms[i].localPosition = m_foldoutPosition;
             foldOutSprites[i].transform.localPosition = m_foldoutOffset;
@@ -112,21 +119,8 @@ public class PlayerFoldOut : MonoBehaviour
             m_foldoutSequence.Join(cameraTarget.DOMoveX(foldOutSprites[i].transform.position.x, m_foldOutTime).SetEase(Ease.OutExpo));
         }
 
-
-
         m_foldoutSequence.Play();
     }
-
-    public void FoldoutUpStart(InputAction.CallbackContext inputCallback)
-    {
-
-    }
-
-    public void FoldoutUpEnd(InputAction.CallbackContext inputCallback)
-    {
-
-    }
-
     public void FoldoutHorizontalEnd(InputAction.CallbackContext inputCallback)
     {
         if (m_foldoutSequence.IsComplete())
@@ -151,7 +145,7 @@ public class PlayerFoldOut : MonoBehaviour
         for (int i = 0; i < playerData.GroupCount; i++)
         {
             m_foldoutPosition = foldOutTransforms[i].localPosition;
-            m_foldoutPosition.x += foldoutSize.x;
+            m_foldoutPosition.x += foldoutSize.x * _currentDirection;
 
             foldOutTransforms[i].localPosition = m_foldoutPosition;
             foldOutSprites[i].transform.localPosition = -m_foldoutOffset;
@@ -170,11 +164,22 @@ public class PlayerFoldOut : MonoBehaviour
         m_foldoutSequence.Play().OnComplete(() => OnSuccessfulFoldOut());
     }
 
+    public void FoldoutUpStart(InputAction.CallbackContext inputCallback)
+    {
+
+    }
+
+    public void FoldoutUpEnd(InputAction.CallbackContext inputCallback)
+    {
+
+    }
+
+
     void OnSuccessfulFoldOut()
     {
         playerMovement.transform.position = foldOutSprites[playerData.GroupCount - 1].transform.position;
 
-        
+
         playerSpriteObject.transform.localPosition = Vector3.zero;
         cameraTarget.transform.localPosition = Vector3.zero;
         groundCheck.transform.localPosition = Vector3.zero;
