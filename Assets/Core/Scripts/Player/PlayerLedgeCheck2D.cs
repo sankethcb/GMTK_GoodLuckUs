@@ -22,7 +22,7 @@ public class PlayerLedgeCheck2D : MonoBehaviour
 
     Vector2 m_cornerPosition = Vector2.zero;
 
-
+    //UNOPTIMIZED
     public bool CheckLedge()
     {
         m_raycastWall = Physics2D.Raycast(wallCheck.position, Vector2.right, ledgeRaycastDist, levelMask);
@@ -54,7 +54,7 @@ public class PlayerLedgeCheck2D : MonoBehaviour
         return false;
     }
 
-
+    //UNOPTIMIZED
     void CalculateLedgeCorner(Vector3 direction)
     {
         float xDist = m_raycastWall.distance;

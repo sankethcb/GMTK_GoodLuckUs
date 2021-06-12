@@ -45,7 +45,7 @@ public class PlayerFoldOut : MonoBehaviour
         RIGHT = 1,
         LEFT = -1
     }
-    [SerializeField] Direction direction;
+    Direction m_direction;
 
     enum FoldoutState
     {
@@ -55,13 +55,13 @@ public class PlayerFoldOut : MonoBehaviour
         MOVE,
         INTERRUPT
     }
-    [SerializeField] FoldoutState currentState;
+    FoldoutState m_currentState;
 
     public void FoldoutLeftStart(InputAction.CallbackContext inputCallback)
     {
-        if (currentState == FoldoutState.IDLE || direction == Direction.LEFT)
+        if (m_currentState == FoldoutState.IDLE || m_direction == Direction.LEFT)
         {
-            direction = Direction.LEFT;
+            m_direction = Direction.LEFT;
             FoldoutHorizontalStart();
         }
 
@@ -69,24 +69,32 @@ public class PlayerFoldOut : MonoBehaviour
 
     public void FoldoutRightStart(InputAction.CallbackContext inputCallback)
     {
-
-        if (currentState == FoldoutState.IDLE || direction == Direction.RIGHT)
+        if (m_currentState == FoldoutState.IDLE || m_direction == Direction.RIGHT)
         {
-            direction = Direction.RIGHT;
+            m_direction = Direction.RIGHT;
             FoldoutHorizontalStart();
         }
     }
 
     void FoldoutHorizontalStart()
     {
-        if (currentState == FoldoutState.INTERRUPT || currentState == FoldoutState.MOVE)
+        if (m_currentState == FoldoutState.INTERRUPT || m_currentState == FoldoutState.MOVE)
             return;
 
-    
-        if (currentState == FoldoutState.IN)
+        if (m_currentState == FoldoutState.IN)
         {
             FoldOutForward();
             return;
+        }
+
+
+        if (playerData.AlternateControls)
+        {
+            if (m_currentState == FoldoutState.OUT)
+            {
+                FoldOutInward();
+                return;
+            }
         }
 
         playerMovement.enabled = false;
@@ -95,7 +103,7 @@ public class PlayerFoldOut : MonoBehaviour
 
         m_maxFoldOuts = Mathf.Min(CheckHorizontalDistance(), playerData.GroupCount);
         m_foldoutOffset.y = 0;
-        m_foldoutOffset.x = foldoutSize.x / 2 * (int)direction;
+        m_foldoutOffset.x = foldoutSize.x / 2 * (int)m_direction;
 
         m_foldoutPosition = Vector2.zero;
 
@@ -107,7 +115,7 @@ public class PlayerFoldOut : MonoBehaviour
 
         for (int i = 0; i < m_maxFoldOuts; i++)
         {
-            m_foldoutPosition.x += foldoutSize.x * (int)direction;
+            m_foldoutPosition.x += foldoutSize.x * (int)m_direction;
 
             foldOutTransforms[i].localPosition = m_foldoutPosition;
             foldOutSprites[i].transform.localPosition = m_foldoutOffset;
@@ -126,20 +134,30 @@ public class PlayerFoldOut : MonoBehaviour
             m_foldoutSequence.AppendCallback(() => CheckForInterruption());
         }
 
+        if (playerData.AlternateControls)
+            m_foldoutSequence.OnComplete(() => FoldoutEnd(groundCheck.IsGrounded));
+
         FoldOutForward();
+
+
     }
 
     public void FoldoutRightEnd(InputAction.CallbackContext inputCallback)
     {
-        if (currentState == FoldoutState.OUT && direction == Direction.RIGHT)
+        if (playerData.AlternateControls) return;
+
+        if (m_currentState == FoldoutState.OUT && m_direction == Direction.RIGHT)
         {
+
             FoldoutEnd(groundCheck.IsGrounded);
         }
     }
 
     public void FoldoutLeftEnd(InputAction.CallbackContext inputCallback)
     {
-        if (currentState == FoldoutState.OUT && direction == Direction.LEFT)
+        if (playerData.AlternateControls) return;
+
+        if (m_currentState == FoldoutState.OUT && m_direction == Direction.LEFT)
         {
             FoldoutEnd(groundCheck.IsGrounded);
         }
@@ -147,14 +165,14 @@ public class PlayerFoldOut : MonoBehaviour
 
     void MoveFoldOutHorizontal()
     {
-        currentState = FoldoutState.MOVE;
+        m_currentState = FoldoutState.MOVE;
 
         InitalizeSequence();
 
         for (int i = 0; i < m_endIndex; i++)
         {
             m_foldoutPosition = foldOutTransforms[i].localPosition;
-            m_foldoutPosition.x += foldoutSize.x * (int)direction;
+            m_foldoutPosition.x += foldoutSize.x * (int)m_direction;
 
             foldOutTransforms[i].localPosition = m_foldoutPosition;
             foldOutSprites[i].transform.localPosition = -m_foldoutOffset;
@@ -179,20 +197,31 @@ public class PlayerFoldOut : MonoBehaviour
         OnFoldOutKilled();
     }
 
+    #region Vertical Movement
+
     public void FoldoutUpStart(InputAction.CallbackContext inputCallback)
     {
-        if (!(currentState == FoldoutState.IDLE || direction == Direction.UP))
+        if (!(m_currentState == FoldoutState.IDLE || m_direction == Direction.UP))
             return;
 
-        if (currentState == FoldoutState.INTERRUPT || currentState == FoldoutState.MOVE)
+        if (m_currentState == FoldoutState.INTERRUPT || m_currentState == FoldoutState.MOVE)
             return;
 
-        direction = Direction.UP;
+        m_direction = Direction.UP;
 
-        if (currentState == FoldoutState.IN)
+        if (m_currentState == FoldoutState.IN)
         {
             FoldOutForward();
             return;
+        }
+
+        if (playerData.AlternateControls)
+        {
+            if (m_currentState == FoldoutState.OUT)
+            {
+                FoldOutInward();
+                return;
+            }
         }
 
         playerMovement.enabled = false;
@@ -233,12 +262,17 @@ public class PlayerFoldOut : MonoBehaviour
             m_foldoutSequence.AppendCallback(() => CheckForInterruption());
         }
 
+        if (playerData.AlternateControls)
+            m_foldoutSequence.OnComplete(() => FoldoutEnd(ledgeCheck.CheckLedge()));
+
         FoldOutForward();
     }
 
     public void FoldoutUpEnd(InputAction.CallbackContext inputCallback)
     {
-        if (currentState == FoldoutState.OUT && direction == Direction.UP)
+        if (playerData.AlternateControls) return;
+        
+        if (m_currentState == FoldoutState.OUT && m_direction == Direction.UP)
         {
             FoldoutEnd(ledgeCheck.CheckLedge());
         }
@@ -246,7 +280,7 @@ public class PlayerFoldOut : MonoBehaviour
 
     void MoveFoldOutVertical()
     {
-        currentState = FoldoutState.MOVE;
+        m_currentState = FoldoutState.MOVE;
 
         InitalizeSequence();
 
@@ -288,7 +322,7 @@ public class PlayerFoldOut : MonoBehaviour
         OnFoldOutKilled();
     }
 
-
+    #endregion
 
     #region Helper Methods
 
@@ -302,14 +336,14 @@ public class PlayerFoldOut : MonoBehaviour
 
     void FoldOutForward()
     {
-        currentState = FoldoutState.OUT;
+        m_currentState = FoldoutState.OUT;
         m_counter = () => m_endIndex++;
         m_foldoutSequence.PlayForward();
     }
 
     void FoldOutInward()
     {
-        currentState = FoldoutState.IN;
+        m_currentState = FoldoutState.IN;
         m_counter = () => m_endIndex--;
         m_foldoutSequence.PlayBackwards();
     }
@@ -318,7 +352,7 @@ public class PlayerFoldOut : MonoBehaviour
     {
         if (condition)
         {
-            currentState = FoldoutState.INTERRUPT;
+            m_currentState = FoldoutState.INTERRUPT;
 
             if (m_foldoutSequence.IsComplete())
                 CheckForInterruption();
@@ -331,14 +365,14 @@ public class PlayerFoldOut : MonoBehaviour
 
     void CheckForInterruption()
     {
-        if (currentState != FoldoutState.INTERRUPT)
+        if (m_currentState != FoldoutState.INTERRUPT)
             return;
 
-        currentState = FoldoutState.MOVE;
+        m_currentState = FoldoutState.MOVE;
 
         m_foldoutSequence.Kill();
 
-        if (direction == Direction.UP)
+        if (m_direction == Direction.UP)
             MoveFoldOutVertical();
         else
             MoveFoldOutHorizontal();
@@ -349,7 +383,7 @@ public class PlayerFoldOut : MonoBehaviour
         playerMovement.enabled = true;
         m_endIndex = 0;
 
-        currentState = FoldoutState.IDLE;
+        m_currentState = FoldoutState.IDLE;
         m_foldoutSequence.Kill();
 
     }
@@ -358,7 +392,7 @@ public class PlayerFoldOut : MonoBehaviour
     {
         m_foldoutSequence = null;
 
-        if (currentState != FoldoutState.MOVE)
+        if (m_currentState != FoldoutState.MOVE)
         {
             m_foldoutPosition = Vector2.zero;
             for (int i = 0; i < m_maxFoldOuts; i++)
@@ -368,13 +402,14 @@ public class PlayerFoldOut : MonoBehaviour
                 foldOutTransforms[i].localScale = Vector2.one;
             }
 
-            currentState = FoldoutState.IDLE;
+            m_currentState = FoldoutState.IDLE;
         }
     }
 
+    //UNOPTIMIZED
     int CheckHorizontalDistance()
     {
-        RaycastHit2D raycastHit = Physics2D.Raycast(transform.position + new Vector3((foldoutSize.x * transform.localScale.x) / 2, 0, 0) * (int)direction, Vector2.right * (int)direction, playerData.GroupCount * foldoutSize.x * transform.localScale.x, playerData.LevelMask);
+        RaycastHit2D raycastHit = Physics2D.Raycast(transform.position + new Vector3((foldoutSize.x * transform.localScale.x) / 2, 0, 0) * (int)m_direction, Vector2.right * (int)m_direction, playerData.GroupCount * foldoutSize.x * transform.localScale.x, playerData.LevelMask);
 
         if (raycastHit.collider)
             return Mathf.FloorToInt(raycastHit.distance / (foldoutSize.x * transform.localScale.x));
@@ -382,6 +417,7 @@ public class PlayerFoldOut : MonoBehaviour
         return playerData.GroupCount;
     }
 
+    //UNOPTIMIZED
     int CheckVerticalDistance()
     {
         RaycastHit2D raycastHit = Physics2D.Raycast(transform.position + new Vector3(0, (foldoutSize.y * transform.localScale.x) / 2, 0), Vector2.up, playerData.GroupCount * foldoutSize.y * transform.localScale.x, playerData.LevelMask);
@@ -391,6 +427,7 @@ public class PlayerFoldOut : MonoBehaviour
 
         return playerData.GroupCount;
     }
+
     #endregion
 
 

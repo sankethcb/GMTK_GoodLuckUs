@@ -9,4 +9,6 @@ public class PlayerData : ScriptableObject
     public List<Color> ColorSet;
 
     public LayerMask LevelMask;
+
+    public bool AlternateControls = false;
 }

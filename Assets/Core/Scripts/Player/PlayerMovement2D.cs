@@ -55,7 +55,6 @@ public class PlayerMovement2D : MonoBehaviour
         m_playerVelocityTarget.y = playerBody.velocity.y;
 
         playerBody.velocity = Vector3.SmoothDamp(playerBody.velocity, m_playerVelocityTarget, ref m_playerVelocityCurrent, smoothing);
-
     }
 
     void OnDisable() 
