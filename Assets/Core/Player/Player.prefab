@@ -1086,6 +1086,13 @@ MonoBehaviour:
     - key: FoldoutUpEnd
       target: {fileID: 2121652483}
       behaviour: {fileID: 2121652485}
+  - inputActionData: {fileID: 11400000, guid: 3776ac63013a08d4f92760d6724d1b3e, type: 2}
+    onStarted: []
+    onPerformed:
+    - key: Interact
+      target: {fileID: 4669556767120580986}
+      behaviour: {fileID: 1379986714}
+    onCancelled: []
 --- !u!50 &4669556767120580989
 Rigidbody2D:
   serializedVersion: 4
