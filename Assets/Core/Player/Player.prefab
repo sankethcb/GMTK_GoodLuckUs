@@ -817,6 +817,7 @@ MonoBehaviour:
   playerSpriteObject: {fileID: 3807205227322940345}
   audioPlayer: {fileID: 302785827}
   foldSFX: {fileID: 8300000, guid: 415250eed243aa840941ad6ac96ad81e, type: 3}
+  moveSFX: {fileID: 8300000, guid: b0b669bac2783304bbe0a221602e1b3f, type: 3}
   foldOutTransforms:
   - {fileID: 757697394}
   - {fileID: 1613019671}

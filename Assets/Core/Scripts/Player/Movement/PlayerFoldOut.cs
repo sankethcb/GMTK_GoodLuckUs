@@ -18,6 +18,7 @@ public class PlayerFoldOut : MonoBehaviour
     [SerializeField] Transform playerSpriteObject;
     [SerializeField] PlayerAudio audioPlayer;
     [SerializeField] AudioClip foldSFX;
+    [SerializeField] AudioClip moveSFX;
 
     [Space()]
     [SerializeField] List<Transform> foldOutTransforms;
@@ -193,7 +194,7 @@ public class PlayerFoldOut : MonoBehaviour
 
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
-            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(foldSFX));
+            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(moveSFX));
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleX(0, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(playerSpriteObject.DOMoveX(foldOutSprites[i].transform.position.x, m_foldOutTime).SetEase(Ease.OutExpo));
         }
@@ -326,7 +327,7 @@ public class PlayerFoldOut : MonoBehaviour
 
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
-            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(foldSFX));
+            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(moveSFX));
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleY(0, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(playerSpriteObject.DOMoveY(foldOutSprites[i].transform.position.y, m_foldOutTime).SetEase(Ease.OutExpo));
         }
