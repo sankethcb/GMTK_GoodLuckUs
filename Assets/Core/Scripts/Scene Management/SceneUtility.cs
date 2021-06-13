@@ -14,6 +14,7 @@ Area_2,
 Area_3,
 Hub_1,
 Ending,
+Tutorial,
 
 //&&&END&&&
 	}
