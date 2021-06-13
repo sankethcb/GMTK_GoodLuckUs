@@ -16,6 +16,8 @@ public class PlayerFoldOut : MonoBehaviour
     [SerializeField] FoldOutAnimator animator;
     [SerializeField] Transform cameraTarget;
     [SerializeField] Transform playerSpriteObject;
+    [SerializeField] PlayerAudio audioPlayer;
+    [SerializeField] AudioClip foldSFX;
 
     [Space()]
     [SerializeField] List<Transform> foldOutTransforms;
@@ -132,6 +134,7 @@ public class PlayerFoldOut : MonoBehaviour
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
             m_foldoutSequence.AppendCallback(() => CheckDistance());
+            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(foldSFX));
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleX(1, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(cameraTarget.DOMoveX(temp, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.AppendCallback(() => m_counter());
@@ -190,6 +193,7 @@ public class PlayerFoldOut : MonoBehaviour
 
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
+            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(foldSFX));
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleX(0, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(playerSpriteObject.DOMoveX(foldOutSprites[i].transform.position.x, m_foldOutTime).SetEase(Ease.OutExpo));
         }
@@ -215,7 +219,7 @@ public class PlayerFoldOut : MonoBehaviour
     {
         if(!playerGroundCheck.IsGrounded)
             return;
-            
+
         if (!(m_currentState == FoldoutState.IDLE || m_direction == Direction.UP))
             return;
 
@@ -272,6 +276,7 @@ public class PlayerFoldOut : MonoBehaviour
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
             m_foldoutSequence.AppendCallback(() => CheckDistance());
+            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(foldSFX));
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleY(1, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(cameraTarget.DOMoveY(temp, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.AppendCallback(() => m_counter());
@@ -321,6 +326,7 @@ public class PlayerFoldOut : MonoBehaviour
 
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
+            m_foldoutSequence.AppendCallback(() => audioPlayer.PlayClipSoft(foldSFX));
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleY(0, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(playerSpriteObject.DOMoveY(foldOutSprites[i].transform.position.y, m_foldOutTime).SetEase(Ease.OutExpo));
         }
@@ -405,9 +411,10 @@ public class PlayerFoldOut : MonoBehaviour
 
     void CheckDistance()
     {
+        
+
         if (m_currentState != FoldoutState.OUT)
             return;
-
 
         if (m_direction == Direction.UP)
         {
