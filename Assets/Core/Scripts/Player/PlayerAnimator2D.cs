@@ -71,5 +71,12 @@ public class PlayerAnimator2D : MonoBehaviour
         }
     }
 
+    public void HighFive(string dir) => animator.SetTrigger("Highfive" + dir);
+
+    public void Wave()
+    {
+        Stop();
+        animator.SetTrigger("Wave");
+    }
 
 }

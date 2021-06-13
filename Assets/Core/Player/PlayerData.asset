@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 734273b731df4fc4bba2c4e225ce756b, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  GroupCount: 6
+  GroupCount: 3
   ColorSet:
   - {r: 1, g: 0, b: 0.09411766, a: 1}
   - {r: 1, g: 0.64705884, b: 0.17254902, a: 1}
