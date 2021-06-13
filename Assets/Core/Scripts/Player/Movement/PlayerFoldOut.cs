@@ -9,8 +9,10 @@ public class PlayerFoldOut : MonoBehaviour
     [Header("References")]
     [SerializeField] PlayerData playerData;
     [SerializeField] PlayerMovement2D playerMovement;
-    [SerializeField] PlayerGroundCheck2D groundCheck;
+    [SerializeField] Rigidbody2D playerBody;
+    [SerializeField] PlayerGroundCheck2D foldoutGroundCheck;
     [SerializeField] PlayerLedgeCheck2D ledgeCheck;
+    [SerializeField] FoldOutAnimator animator;
     [SerializeField] Transform cameraTarget;
     [SerializeField] Transform playerSpriteObject;
 
@@ -19,7 +21,6 @@ public class PlayerFoldOut : MonoBehaviour
     [SerializeField] List<SpriteRenderer> foldOutSprites;
 
     [Header("Settings")]
-    [SerializeField] Sprite foldoutSprite;
     [SerializeField] float foldoutSpeed = 1;
     [SerializeField] float foldoutAcceleration = 1;
     [SerializeField] float climbHopDistance = 1;
@@ -133,7 +134,10 @@ public class PlayerFoldOut : MonoBehaviour
         }
 
         if (playerData.AlternateControls)
-            m_foldoutSequence.OnComplete(() => FoldoutEnd(groundCheck.IsGrounded));
+            m_foldoutSequence.OnComplete(() => FoldoutEnd(foldoutGroundCheck.IsGrounded));
+
+        animator.SetIndex();
+        animator.SetDirection(false, true);
 
         FoldOutForward();
 
@@ -147,7 +151,7 @@ public class PlayerFoldOut : MonoBehaviour
         if (m_currentState == FoldoutState.OUT && m_direction == Direction.RIGHT)
         {
 
-            FoldoutEnd(groundCheck.IsGrounded);
+            FoldoutEnd(foldoutGroundCheck.IsGrounded);
         }
     }
 
@@ -157,7 +161,7 @@ public class PlayerFoldOut : MonoBehaviour
 
         if (m_currentState == FoldoutState.OUT && m_direction == Direction.LEFT)
         {
-            FoldoutEnd(groundCheck.IsGrounded);
+            FoldoutEnd(foldoutGroundCheck.IsGrounded);
         }
     }
 
@@ -181,6 +185,7 @@ public class PlayerFoldOut : MonoBehaviour
             m_foldoutSequence.Join(playerSpriteObject.DOMoveX(foldOutSprites[i].transform.position.x, m_foldOutTime).SetEase(Ease.OutExpo));
         }
 
+        playerBody.isKinematic = true;
         m_foldoutSequence.Play().OnComplete(() => PostMoveHorizontal());
     }
 
@@ -263,6 +268,9 @@ public class PlayerFoldOut : MonoBehaviour
         if (playerData.AlternateControls)
             m_foldoutSequence.OnComplete(() => FoldoutEnd(ledgeCheck.CheckLedge()));
 
+        animator.SetIndex();
+        animator.SetDirection(true, false);
+
         FoldOutForward();
     }
 
@@ -296,6 +304,7 @@ public class PlayerFoldOut : MonoBehaviour
             m_foldoutSequence.Join(playerSpriteObject.DOMoveY(foldOutSprites[i].transform.position.y, m_foldOutTime).SetEase(Ease.OutExpo));
         }
 
+        playerBody.isKinematic = true;
         m_foldoutSequence.Play().OnComplete(() => PostMoveVertical());
     }
 
@@ -314,13 +323,18 @@ public class PlayerFoldOut : MonoBehaviour
 
         DOTween.Sequence()
         .Append(playerMovement.transform.DOBlendableMoveBy(new Vector3(0, yDist + climbHopDistance, 0), 0.5f))
-        .Insert(0.2f, playerMovement.transform.DOBlendableMoveBy(new Vector3(xDist + 0.5f * Mathf.Sign(xDist), 0, 0), 0.5f));
-
-        OnFoldOutReset();
-        OnFoldOutKilled();
+        .Insert(0.2f, playerMovement.transform.DOBlendableMoveBy(new Vector3(xDist + 0.5f * Mathf.Sign(xDist), 0, 0), 0.5f))
+        .OnComplete(() =>
+        {
+            OnFoldOutReset();
+            OnFoldOutKilled();
+        });
     }
 
     #endregion
+
+
+
 
     #region Helper Methods
 
@@ -378,12 +392,14 @@ public class PlayerFoldOut : MonoBehaviour
 
     void OnFoldOutReset()
     {
+        animator.SetDirection();
+
+        playerBody.isKinematic = false;
         playerMovement.enabled = true;
         m_endIndex = 0;
 
         m_currentState = FoldoutState.IDLE;
         m_foldoutSequence.Kill();
-
     }
 
     void OnFoldOutKilled()
@@ -430,16 +446,7 @@ public class PlayerFoldOut : MonoBehaviour
 
 
     #region Editor Helper Methods
-    [ContextMenu("Set Sprite")]
-    void SetFoldOutSprite()
-    {
-        for (int i = 0; i < foldOutSprites.Count; i++)
-        {
-            foldOutSprites[i].sprite = foldoutSprite;
-        }
 
-        foldoutSize = foldoutSprite.bounds.size;
-    }
 
     [ContextMenu("Set Colors")]
     void SetFoldOutColors()
