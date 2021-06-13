@@ -262,6 +262,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Collectible
       objectReference: {fileID: 0}
+    - target: {fileID: 5107278742342651405, guid: 7d6530ad6b0505441b293cce187667d0, type: 3}
+      propertyPath: m_Color.b
+      value: 0.09411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107278742342651405, guid: 7d6530ad6b0505441b293cce187667d0, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d6530ad6b0505441b293cce187667d0, type: 3}
 --- !u!1001 &1635115884
@@ -394,11 +402,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5841811515595667078, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.0963323
+      value: -5.3173676
       objectReference: {fileID: 0}
     - target: {fileID: 5841811515595667078, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.09269
+      value: 3.0899498
       objectReference: {fileID: 0}
     - target: {fileID: 5841811516432150983, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
       propertyPath: m_Follow
