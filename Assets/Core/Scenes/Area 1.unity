@@ -360,6 +360,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 123033515, guid: 5299b82782f10cd4ab421cb5bb8cbf0a, type: 3}
+      propertyPath: NextScene
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7295276826106869834, guid: 5299b82782f10cd4ab421cb5bb8cbf0a, type: 3}
       propertyPath: m_RootOrder
       value: 1
