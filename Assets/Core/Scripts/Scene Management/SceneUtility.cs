@@ -6,6 +6,7 @@ namespace Core.SceneManagement
     public enum SCENES
     {
         //###START###
+Menu,
 Main,
 PlayerTesting,
 Area_1,
