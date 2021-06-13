@@ -7,6 +7,11 @@ namespace Core.SceneManagement
     {
         //###START###
 Main,
+PlayerTesting,
+Area_1,
+Area_2,
+Area_3,
+Hub_1,
 
 //&&&END&&&
 	}
