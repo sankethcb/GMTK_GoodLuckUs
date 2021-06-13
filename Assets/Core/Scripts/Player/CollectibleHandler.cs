@@ -52,6 +52,7 @@ public class CollectibleHandler : MonoBehaviour
 
     IEnumerator HandleCollection()
     {
+        m_collectible.FadeInstruction(0);
 
         Vector2 lockInPos = rightPos.position;
         string dir = "Right";
