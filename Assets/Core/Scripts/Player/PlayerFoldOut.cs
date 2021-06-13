@@ -25,7 +25,6 @@ public class PlayerFoldOut : MonoBehaviour
     [SerializeField] float climbHopDistance = 1;
     [SerializeField] Vector2 foldoutSize;
 
-
     Vector2 m_foldoutPosition;
     Vector2 m_foldoutOffset;
     Vector3 m_foldoutScale = Vector3.one;
@@ -64,7 +63,6 @@ public class PlayerFoldOut : MonoBehaviour
             m_direction = Direction.LEFT;
             FoldoutHorizontalStart();
         }
-
     }
 
     public void FoldoutRightStart(InputAction.CallbackContext inputCallback)
@@ -271,7 +269,7 @@ public class PlayerFoldOut : MonoBehaviour
     public void FoldoutUpEnd(InputAction.CallbackContext inputCallback)
     {
         if (playerData.AlternateControls) return;
-        
+
         if (m_currentState == FoldoutState.OUT && m_direction == Direction.UP)
         {
             FoldoutEnd(ledgeCheck.CheckLedge());

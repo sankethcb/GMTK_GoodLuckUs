@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Core.SaveSystem;
+
 
 namespace Core.SceneManagement
 {
     [CreateAssetMenu(fileName = "SceneData", menuName = "Core/Scene Handling/Scene Data", order = 0)]
-    public class SceneData : ScriptableObject, ISaveable
+    public class SceneData : ScriptableObject
     {
         static List<SCENES> loadedScenes;
         public List<SCENES> LoadedScenes => loadedScenes;

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+//using UnityEngine.AddressableAssets;
 
 namespace Core
 {
@@ -15,18 +15,11 @@ namespace Core
 #if UNITY_EDITOR || DEV_BUILD
             Debug.Log("Starting Game Initalization");
 #endif
-            Addressables.InstantiateAsync(GameConstants.GAME_LOADER_PATH).Completed += OnLoadDone;
+            //Addressables.InstantiateAsync(GameConstants.GAME_LOADER_PATH).Completed += OnLoadDone;
 
         }
 
-        private static void OnLoadDone(UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<GameObject> obj)
-        {
-
-#if UNITY_EDITOR || DEV_BUILD
-            Debug.Log("Game Initalized");
-#endif
-
-        }
+        
 
     }
 }
