@@ -10,6 +10,7 @@ public class PlayerFoldOut : MonoBehaviour
     [SerializeField] PlayerData playerData;
     [SerializeField] PlayerMovement2D playerMovement;
     [SerializeField] Rigidbody2D playerBody;
+    [SerializeField] PlayerGroundCheck2D playerGroundCheck;
     [SerializeField] PlayerGroundCheck2D foldoutGroundCheck;
     [SerializeField] PlayerLedgeCheck2D ledgeCheck;
     [SerializeField] FoldOutAnimator animator;
@@ -35,7 +36,7 @@ public class PlayerFoldOut : MonoBehaviour
     float m_foldOutTime;
 
     int m_maxFoldOuts = 0;
-    int m_endIndex = 0;
+    public int m_endIndex = 0;
 
     System.Action m_counter;
 
@@ -77,6 +78,9 @@ public class PlayerFoldOut : MonoBehaviour
 
     void FoldoutHorizontalStart()
     {
+        if(!playerGroundCheck.IsGrounded)
+            return;
+
         if (m_currentState == FoldoutState.INTERRUPT || m_currentState == FoldoutState.MOVE)
             return;
 
@@ -100,7 +104,7 @@ public class PlayerFoldOut : MonoBehaviour
 
         InitalizeSequence();
 
-        m_maxFoldOuts = Mathf.Min(CheckHorizontalDistance(), playerData.GroupCount);
+        m_maxFoldOuts = playerData.GroupCount;//Mathf.Min(CheckHorizontalDistance(), playerData.GroupCount);
         m_foldoutOffset.y = 0;
         m_foldoutOffset.x = foldoutSize.x / 2 * (int)m_direction;
 
@@ -127,9 +131,15 @@ public class PlayerFoldOut : MonoBehaviour
 
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
+            m_foldoutSequence.AppendCallback(() => CheckDistance());
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleX(1, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(cameraTarget.DOMoveX(temp, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.AppendCallback(() => m_counter());
+
+            //if (playerData.AlternateControls)
+            //m_foldoutSequence.AppendCallback(() => FoldoutEnd(foldoutGroundCheck.IsGrounded));
+
+
             m_foldoutSequence.AppendCallback(() => CheckForInterruption());
         }
 
@@ -150,7 +160,6 @@ public class PlayerFoldOut : MonoBehaviour
 
         if (m_currentState == FoldoutState.OUT && m_direction == Direction.RIGHT)
         {
-
             FoldoutEnd(foldoutGroundCheck.IsGrounded);
         }
     }
@@ -204,6 +213,9 @@ public class PlayerFoldOut : MonoBehaviour
 
     public void FoldoutUpStart(InputAction.CallbackContext inputCallback)
     {
+        if(!playerGroundCheck.IsGrounded)
+            return;
+            
         if (!(m_currentState == FoldoutState.IDLE || m_direction == Direction.UP))
             return;
 
@@ -231,7 +243,7 @@ public class PlayerFoldOut : MonoBehaviour
 
         InitalizeSequence();
 
-        m_maxFoldOuts = Mathf.Min(CheckVerticalDistance(), playerData.GroupCount);
+        m_maxFoldOuts = playerData.GroupCount;//Mathf.Min(CheckVerticalDistance(), playerData.GroupCount);
 
         m_foldoutOffset.x = 0;
         m_foldoutOffset.y = foldoutSize.y / 2;
@@ -259,9 +271,18 @@ public class PlayerFoldOut : MonoBehaviour
 
             m_foldOutTime = 1 / (foldoutSpeed + foldoutAcceleration * i);
 
+            m_foldoutSequence.AppendCallback(() => CheckDistance());
             m_foldoutSequence.Append(foldOutTransforms[i].DOScaleY(1, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.Join(cameraTarget.DOMoveY(temp, m_foldOutTime).SetEase(Ease.OutExpo));
             m_foldoutSequence.AppendCallback(() => m_counter());
+
+            if (playerData.AlternateControls && i < m_maxFoldOuts - 1)
+                m_foldoutSequence.AppendCallback(() =>
+                {
+                    if (ledgeCheck.CheckLedge()) m_currentState = FoldoutState.INTERRUPT;
+                }
+                    );
+
             m_foldoutSequence.AppendCallback(() => CheckForInterruption());
         }
 
@@ -333,7 +354,14 @@ public class PlayerFoldOut : MonoBehaviour
 
     #endregion
 
-
+    void FixedUpdate() 
+    {
+        if(!playerGroundCheck.IsGrounded)
+        {
+            if(m_currentState == FoldoutState.OUT)
+                FoldOutInward();
+        }
+    }
 
 
     #region Helper Methods
@@ -375,6 +403,43 @@ public class PlayerFoldOut : MonoBehaviour
         FoldOutInward();
     }
 
+    void CheckDistance()
+    {
+        if (m_currentState != FoldoutState.OUT)
+            return;
+
+
+        if (m_direction == Direction.UP)
+        {
+            if (CheckVerticalDistance())
+            {
+                if (m_endIndex != 0)
+                {
+                    FoldoutEnd(ledgeCheck.CheckLedge());
+                    CheckForInterruption();
+                }
+                else
+                    FoldOutInward();
+
+            }
+        }
+        else
+        {
+            if (CheckHorizontalDistance())
+            {
+                if (m_endIndex != 0)
+                {
+                    FoldoutEnd(foldoutGroundCheck.IsGrounded);
+                    CheckForInterruption();
+                }
+
+                else
+                    FoldOutInward();
+            }
+        }
+
+    }
+
     void CheckForInterruption()
     {
         if (m_currentState != FoldoutState.INTERRUPT)
@@ -409,7 +474,7 @@ public class PlayerFoldOut : MonoBehaviour
         if (m_currentState != FoldoutState.MOVE)
         {
             m_foldoutPosition = Vector2.zero;
-            for (int i = 0; i < m_maxFoldOuts; i++)
+            for (int i = 0; i < playerData.GroupCount; i++)
             {
                 foldOutTransforms[i].localPosition = m_foldoutPosition;
                 foldOutTransforms[i].gameObject.SetActive(false);
@@ -421,25 +486,33 @@ public class PlayerFoldOut : MonoBehaviour
     }
 
     //UNOPTIMIZED
-    int CheckHorizontalDistance()
+    bool CheckHorizontalDistance()
     {
-        RaycastHit2D raycastHit = Physics2D.Raycast(transform.position + new Vector3((foldoutSize.x * transform.localScale.x) / 2, 0, 0) * (int)m_direction, Vector2.right * (int)m_direction, playerData.GroupCount * foldoutSize.x * transform.localScale.x, playerData.LevelMask);
+        Vector3 origin = foldOutTransforms[m_endIndex].position;
 
-        if (raycastHit.collider)
-            return Mathf.FloorToInt(raycastHit.distance / (foldoutSize.x * transform.localScale.x));
+        RaycastHit2D raycastHit = Physics2D.Raycast(origin, Vector2.right * (int)m_direction, foldoutSize.x * transform.localScale.x * 1.2f, playerData.LevelMask);
+        
+        return raycastHit.collider;
 
-        return playerData.GroupCount;
+        //if (raycastHit.collider)
+        //return Mathf.FloorToInt(raycastHit.distance / (foldoutSize.x * transform.localScale.x));
+
+        // return playerData.GroupCount;
     }
 
     //UNOPTIMIZED
-    int CheckVerticalDistance()
+    bool CheckVerticalDistance()
     {
-        RaycastHit2D raycastHit = Physics2D.Raycast(transform.position + new Vector3(0, (foldoutSize.y * transform.localScale.x) / 2, 0), Vector2.up, playerData.GroupCount * foldoutSize.y * transform.localScale.x, playerData.LevelMask);
+        Vector3 origin = m_endIndex == 0 ? transform.position : foldOutSprites[m_endIndex - 1].transform.position;
 
-        if (raycastHit.collider)
-            return Mathf.FloorToInt(raycastHit.distance / (foldoutSize.y * transform.localScale.x));
+        RaycastHit2D raycastHit = Physics2D.Raycast(origin + new Vector3(0, (foldoutSize.y * transform.localScale.x) / 2, 0), Vector2.up, foldoutSize.y * transform.localScale.x, playerData.LevelMask);
 
-        return playerData.GroupCount;
+        return raycastHit.collider;
+
+        //if (raycastHit.collider)
+        // return Mathf.FloorToInt(raycastHit.distance / (foldoutSize.y * transform.localScale.x));
+
+        // return playerData.GroupCount;
     }
 
     #endregion
