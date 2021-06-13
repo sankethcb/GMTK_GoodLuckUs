@@ -599,7 +599,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallCheck: {fileID: 1905649117}
   ledgeCheck: {fileID: 1261188975}
-  ledgeRaycastDist: 1
+  ledgeRaycastDist: 0.3
   levelMask:
     serializedVersion: 2
     m_Bits: 64
