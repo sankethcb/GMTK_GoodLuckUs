@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5107278740788764818}
   - component: {fileID: 5107278740788764817}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 5107278741238700765}
   - component: {fileID: 5107278741238700739}
   - component: {fileID: 5107278741238700738}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Collectible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +188,7 @@ GameObject:
   - component: {fileID: 5107278742342651379}
   - component: {fileID: 5107278742342651405}
   - component: {fileID: 5107278742342651406}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +252,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2976315598859739726, guid: 8b2bb4e900b75444badd65d62fd58d8f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5254902, g: 0, b: 0.49019608, a: 1}
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
