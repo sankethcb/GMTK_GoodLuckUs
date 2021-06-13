@@ -599,7 +599,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallCheck: {fileID: 1905649117}
   ledgeCheck: {fileID: 1261188975}
-  ledgeRaycastDist: 0.3
+  ledgeRaycastDist: 1
   levelMask:
     serializedVersion: 2
     m_Bits: 64
@@ -627,7 +627,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1261188974}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.76, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1139519932}
@@ -1023,7 +1023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerBody: {fileID: 4669556767120580989}
   groundCheck: {fileID: 8505292651717903858}
-  playerSpeed: 100
+  playerSpeed: 120
   allowAirMovement: 0
   smoothing: 0.05
 --- !u!114 &4669556767120580991
