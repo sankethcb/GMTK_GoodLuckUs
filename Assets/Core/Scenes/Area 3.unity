@@ -206,6 +206,18 @@ PrefabInstance:
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[8].y
       value: 14.862136
       objectReference: {fileID: 0}
+    - target: {fileID: 738486586, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 738486586, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 738486586, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 5841811515081771728, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
       propertyPath: m_Name
       value: Cameras
@@ -268,7 +280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5841811515595667078, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.86
+      value: -2.8600001
       objectReference: {fileID: 0}
     - target: {fileID: 5841811516432150980, guid: 5be97e65fca02c0469452c2faed1fea3, type: 3}
       propertyPath: m_LocalPosition.x
