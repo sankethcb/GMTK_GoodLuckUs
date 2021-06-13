@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8513877613240813583}
   - component: {fileID: 3705352814137029808}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7760684465442312341}
   - component: {fileID: 6799586499289985494}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Handle (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 7295276826106869837}
   - component: {fileID: 7295276826106869835}
   - component: {fileID: 123033515}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -292,7 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a66e3a9d75d01149a7b84db788c9b7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NextScene: 5
+  NextScene: 7
 --- !u!1 &7295276826852485915
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,7 +303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7295276826852485912}
   - component: {fileID: 7295276826852485913}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
